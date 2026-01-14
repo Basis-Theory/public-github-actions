@@ -1,0 +1,33 @@
+name: 'Deploy Notify'
+description: 'Deploy Notify'
+inputs:
+  slack-api-token:
+    description: 'API token for Slack'
+    required: true
+  channel:
+    description: "Channel to send message"
+    required: true
+  mention-person:
+    description: "User to mention in message"
+  status:
+    description: 'Status of the deployment [start, done, request, success, cancelled, failure]'
+    default: 'start'
+  job-status:
+    description: 'Status of the GitHub Actions job'
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: job-status
+      shell: bash
+      run: |
+        echo "job_status=${{ inputs.job-status || job.status }}" >> $GITHUB_ENV
+    - name: Notify
+      uses: Basis-Theory/github-actions/helper-slack-action@master
+      with:
+        github: ${{ toJSON(github) }}
+        slack-api-token: ${{ inputs.slack-api-token }}
+        channel: ${{ inputs.channel }}
+        mention-person: ${{ inputs.mention-person }}
+        status: ${{ inputs.status }}
+        extras: nope

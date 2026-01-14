@@ -1,0 +1,45 @@
+name: 'build-test'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - master
+      - 'releases/*'
+
+jobs:
+  build: # make sure build/ci work properly
+    defaults:
+      run:
+        working-directory: ./slack-javascript-action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: |
+          npm install
+      - run: |
+          npm run all
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+        
+      - name: Public IP
+        id: ip
+        uses: ./public-ip
+
+      - name: Assert Public IP Not Empty
+        if: ${{ steps.ip.outputs.ipv4 == '' }}
+        run: |
+          exit 1
+
+  pr-security-check:
+    name: PR Security Check
+    uses: Basis-Theory/public-security-workflows/.github/workflows/pr-check.yml@master
+    secrets: inherit

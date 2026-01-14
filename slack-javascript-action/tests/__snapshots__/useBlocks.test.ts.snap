@@ -1,0 +1,277 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`get approval message Approval needed request for platform 1`] = `
+[
+  {
+    "text": {
+      "text": "*Approval Requested from <drewsue>*",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  {
+    "elements": [
+      {
+        "text": ":git: \`test-repo\` @ \`v42.0.0\`  | :technologist: drewsue",
+        "type": "mrkdwn",
+      },
+    ],
+    "type": "context",
+  },
+  {
+    "elements": [
+      {
+        "text": {
+          "emoji": true,
+          "text": "Open Action :github:",
+          "type": "plain_text",
+        },
+        "type": "button",
+        "url": "http://test-repo.com/action",
+      },
+    ],
+    "type": "actions",
+  },
+  {
+    "type": "divider",
+  },
+]
+`;
+
+exports[`get approval message Approval needed request for product 1`] = `
+[
+  {
+    "text": {
+      "text": "*Approval Requested from <drewsue>*",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  {
+    "elements": [
+      {
+        "text": ":git: \`test-repo\` @ \`v42.0.0\`  | :technologist: drewsue",
+        "type": "mrkdwn",
+      },
+    ],
+    "type": "context",
+  },
+  {
+    "elements": [
+      {
+        "text": {
+          "emoji": true,
+          "text": "Open Action :github:",
+          "type": "plain_text",
+        },
+        "type": "button",
+        "url": "http://test-repo.com/action",
+      },
+    ],
+    "type": "actions",
+  },
+  {
+    "type": "divider",
+  },
+]
+`;
+
+exports[`get approval message Updated approval message after it has been approved 1`] = `
+[
+  {
+    "text": {
+      "text": ":approved: ~*Approval Requested from <drewsue>*~",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  {
+    "elements": [
+      {
+        "text": "~:git: \`test-repo\` @ \`v42.0.0\`  | :technologist: drewsue~",
+        "type": "mrkdwn",
+      },
+    ],
+    "type": "context",
+  },
+  {
+    "elements": [
+      {
+        "text": {
+          "emoji": true,
+          "text": "Open Deploy :slack:",
+          "type": "plain_text",
+        },
+        "type": "button",
+        "url": "https://basistheory.slack.com/archives/C1234567890/1234567890.123456",
+      },
+    ],
+    "type": "actions",
+  },
+  {
+    "type": "divider",
+  },
+]
+`;
+
+exports[`get deploy message Deploying started message 1`] = `
+[
+  {
+    "text": {
+      "text": "Deploying",
+      "type": "plain_text",
+    },
+    "type": "header",
+  },
+  {
+    "elements": [
+      {
+        "text": ":git: \`test-repo\` @ \`v42.0.0\`  | :technologist: drewsue",
+        "type": "mrkdwn",
+      },
+    ],
+    "type": "context",
+  },
+  {
+    "elements": [
+      {
+        "text": "Deploy started \`2021-01-01T00:00:00Z\` ",
+        "type": "mrkdwn",
+      },
+    ],
+    "type": "context",
+  },
+  {
+    "elements": [
+      {
+        "text": {
+          "emoji": true,
+          "text": "Open Action  :github:",
+          "type": "plain_text",
+        },
+        "type": "button",
+        "url": "http://test-repo.com/action",
+      },
+    ],
+    "type": "actions",
+  },
+  {
+    "type": "divider",
+  },
+]
+`;
+
+exports[`get deploy message Updated message when deploy is done 1`] = `
+[
+  {
+    "text": {
+      "text": "Deploying",
+      "type": "plain_text",
+    },
+    "type": "header",
+  },
+  {
+    "elements": [
+      {
+        "text": ":git: \`test-repo\` @ \`v42.0.0\`  | :technologist: drewsue",
+        "type": "mrkdwn",
+      },
+    ],
+    "type": "context",
+  },
+  {
+    "elements": [
+      {
+        "text": "Deploy started \`2021-01-01T00:00:00Z\` and finished \`2021-01-01T00:00:00Z\`",
+        "type": "mrkdwn",
+      },
+    ],
+    "type": "context",
+  },
+  {
+    "elements": [
+      {
+        "text": {
+          "emoji": true,
+          "text": "Open Action  :github:",
+          "type": "plain_text",
+        },
+        "type": "button",
+        "url": "http://test-repo.com/action",
+      },
+    ],
+    "type": "actions",
+  },
+  {
+    "type": "divider",
+  },
+]
+`;
+
+exports[`release notes Correctly formed will return each as its own block and no urls 1`] = `
+[
+  {
+    "text": {
+      "text": " :loud_sound: *Release Notes* :loud_sound:",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  {
+    "text": {
+      "text": "• chore(deps): Upgrades dependencies by @dhudec",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  {
+    "text": {
+      "text": "• supporting sessions in proxy by @jleon15",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`release notes Malformed changelog will just return the note 1`] = `
+[
+  {
+    "text": {
+      "text": " :loud_sound: *Release Notes* :loud_sound:",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  {
+    "text": {
+      "text": "• stuff",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`release notes No bullets anywhere will just return the note 1`] = `
+[
+  {
+    "text": {
+      "text": " :loud_sound: *Release Notes* :loud_sound:",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+  {
+    "text": {
+      "text": "• no bullets 
+ any 
+ where",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`release notes Nothing will return nothing 1`] = `[]`;

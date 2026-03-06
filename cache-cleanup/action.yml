@@ -1,42 +1,38 @@
 name: Cleanup PR Caches
+description: Deletes GitHub Actions caches scoped to a merged PR's branch and merge ref
 
-on:
-  workflow_call:
+runs:
+  using: composite
+  steps:
+    - name: Cleanup merged PR branch caches
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        REPOSITORY: ${{ github.repository }}
+        COMMIT_SHA: ${{ github.sha }}
+      run: |
+        # Find the PR that produced this merge commit
+        PR_DATA=$(gh api /repos/${REPOSITORY}/commits/${COMMIT_SHA}/pulls --jq '.[0] | {number, branch: .head.ref}')
 
-jobs:
-  cleanup-pr-caches:
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-    steps:
-      - name: Cleanup merged PR branch caches
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          COMMIT_SHA: ${{ github.sha }}
-        run: |
-          # Find the PR that produced this merge commit
-          PR_DATA=$(gh api /repos/${REPOSITORY}/commits/${COMMIT_SHA}/pulls --jq '.[0] | {number, branch: .head.ref}')
+        if [ -z "$PR_DATA" ] || [ "$PR_DATA" = "null" ]; then
+          echo "No PR found for commit ${COMMIT_SHA}, skipping cache cleanup"
+          exit 0
+        fi
 
-          if [ -z "$PR_DATA" ] || [ "$PR_DATA" = "null" ]; then
-            echo "No PR found for commit ${COMMIT_SHA}, skipping cache cleanup"
-            exit 0
-          fi
+        PR_NUMBER=$(echo "$PR_DATA" | jq -r '.number')
+        PR_BRANCH=$(echo "$PR_DATA" | jq -r '.branch')
+        echo "Cleaning caches for PR #${PR_NUMBER} (branch: ${PR_BRANCH})"
 
-          PR_NUMBER=$(echo "$PR_DATA" | jq -r '.number')
-          PR_BRANCH=$(echo "$PR_DATA" | jq -r '.branch')
-          echo "Cleaning caches for PR #${PR_NUMBER} (branch: ${PR_BRANCH})"
-
-          # Delete caches scoped to the PR merge ref and the head branch
-          for ref in "refs/pull/${PR_NUMBER}/merge" "refs/heads/${PR_BRANCH}"; do
-            echo "Checking ref: $ref"
-            gh actions-cache list --repo "${REPOSITORY}" --branch "$ref" --limit 100 \
-              --json id,sizeInBytes,key | \
-            jq -r '.[] | "\(.id)\t\(.sizeInBytes)\t\(.key)"' | \
-            while IFS=$'\t' read -r id size key; do
-              echo "  Deleting: $key ($(( size / 1048576 )) MB)"
-              gh actions-cache delete "$id" --repo "${REPOSITORY}" --confirm
-            done
+        # Delete caches scoped to the PR merge ref and the head branch
+        for ref in "refs/pull/${PR_NUMBER}/merge" "refs/heads/${PR_BRANCH}"; do
+          echo "Checking ref: $ref"
+          gh actions-cache list --repo "${REPOSITORY}" --branch "$ref" --limit 100 \
+            --json id,sizeInBytes,key | \
+          jq -r '.[] | "\(.id)\t\(.sizeInBytes)\t\(.key)"' | \
+          while IFS=$'\t' read -r id size key; do
+            echo "  Deleting: $key ($(( size / 1048576 )) MB)"
+            gh actions-cache delete "$id" --repo "${REPOSITORY}" --confirm
           done
+        done
 
-          echo "Cache cleanup complete"
+        echo "Cache cleanup complete"

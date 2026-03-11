@@ -9,6 +9,8 @@ inputs:
     required: true
   mention-person:
     description: "User to mention in message"
+  author:
+    description: "Override the GitHub actor (for dispatched workflows)"
   status:
     description: 'Status of the deployment [start, done, request, success, cancelled, failure]'
     default: 'start'
@@ -29,5 +31,6 @@ runs:
         slack-api-token: ${{ inputs.slack-api-token }}
         channel: ${{ inputs.channel }}
         mention-person: ${{ inputs.mention-person }}
+        author: ${{ inputs.author }}
         status: ${{ inputs.status }}
         extras: nope

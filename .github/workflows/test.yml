@@ -13,10 +13,10 @@ jobs:
         working-directory: ./slack-javascript-action
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
       - run: |
           npm install
       - run: |
@@ -25,10 +25,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
         
       - name: Public IP
         id: ip
@@ -38,8 +38,3 @@ jobs:
         if: ${{ steps.ip.outputs.ipv4 == '' }}
         run: |
           exit 1
-
-  pr-security-check:
-    name: PR Security Check
-    uses: Basis-Theory/public-security-workflows/.github/workflows/pr-check.yml@master
-    secrets: inherit

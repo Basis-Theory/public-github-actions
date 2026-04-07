@@ -22,5 +22,5 @@ outputs:
   message_id:
     description: 'id of the message'
 runs:
-  using: "node16"
+  using: "node24"
   main: "dist/index.js"

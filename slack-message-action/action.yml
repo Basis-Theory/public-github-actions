@@ -19,5 +19,5 @@ outputs:
   message_id:
     description: "Message Id of the sent message"
 runs:
-  using: "node16"
+  using: "node24"
   main: "../slack-javascript-action/dist/slack/index.js"

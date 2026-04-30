@@ -107,8 +107,8 @@ describe("release created by bot account", () => {
     mockGetInput({ ...coreData, github: JSON.stringify(localMockData) });
   });
 
-  test("should return the expected config", () => {
-    expect(useConfig()).toMatchSnapshot();
+  test("falls back to github.actor, not the bot login", () => {
+    expect(useConfig().author).toBe(githubData.actor);
   });
 });
 

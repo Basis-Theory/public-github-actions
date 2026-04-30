@@ -97,6 +97,21 @@ describe("release created by github", () => {
   });
 });
 
+describe("release created by bot account", () => {
+  beforeEach(() => {
+    const localMockData = { ...githubData };
+    if (localMockData.event.release) {
+      localMockData.event.release.author.login = "bt-version-tagger[bot]";
+    }
+
+    mockGetInput({ ...coreData, github: JSON.stringify(localMockData) });
+  });
+
+  test("should return the expected config", () => {
+    expect(useConfig()).toMatchSnapshot();
+  });
+});
+
 describe("no release or commit", () => {
   beforeEach(() => {
     const localMockData = { ...githubData };

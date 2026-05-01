@@ -2,7 +2,11 @@ import { jest } from "@jest/globals";
 import * as core from "@actions/core";
 import * as artifact from "@actions/artifact";
 import { GithubContextType } from "../src/useConfig";
-import { ArtifactClient, DefaultArtifactClient } from "@actions/artifact";
+import {
+  ArtifactClient,
+  ArtifactNotFoundError,
+  DefaultArtifactClient,
+} from "@actions/artifact";
 // @ts-ignore
 import fs from "fs";
 
@@ -85,9 +89,14 @@ const useSimulatedGithub = (
           };
           return mockedArtifact;
         }),
-        getArtifact: jest.fn().mockImplementation(() => ({
-          artifact: mockedArtifact,
-        })),
+        getArtifact: jest.fn().mockImplementation(() => {
+          if (!mockedArtifact) {
+            throw new ArtifactNotFoundError(
+              "Artifact not found for name: release-message-information"
+            );
+          }
+          return { artifact: mockedArtifact };
+        }),
         downloadArtifact: jest.fn().mockImplementation(() => ({
           downloadPath: ".",
           artifactName: "release-message-information",

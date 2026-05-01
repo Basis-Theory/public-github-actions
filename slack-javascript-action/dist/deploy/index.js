@@ -577,7 +577,8 @@ const getReleaseNotes = (githubContext) => {
     return "no release notes";
 };
 const getAuthor = (githubContext) => githubContext.event.release &&
-    !githubContext.event.release.author.login.includes("github-actions")
+    !githubContext.event.release.author.login.includes("github-actions") &&
+    !githubContext.event.release.author.login.includes("[bot]")
     ? githubContext.event.release.author.login
     : githubContext.actor;
 const getDateTime = () => {

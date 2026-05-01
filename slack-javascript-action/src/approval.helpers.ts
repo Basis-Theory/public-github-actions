@@ -2,7 +2,10 @@ import { sendMessage, SlackMessage, updateMessage } from "./slack.client";
 import useBlocks from "./useBlocks";
 import { ConfigType } from "./useConfig";
 import fs from "fs";
-import { DefaultArtifactClient } from "@actions/artifact";
+import {
+  DefaultArtifactClient,
+  ArtifactNotFoundError,
+} from "@actions/artifact";
 import { threadReleaseNotes } from "./deploy.helpers";
 
 const FILE_NAME = "release-message-information";
@@ -66,7 +69,11 @@ const approvalWasGrantedOrRejected = async (
       return message?.ts;
     }
   } catch (e) {
-    console.info("Problem updating file:", e);
+    if (e instanceof ArtifactNotFoundError) {
+      console.info("No approval artifact found, skipping update.");
+    } else {
+      console.info("Problem updating file:", e);
+    }
   }
 
   return undefined;

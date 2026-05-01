@@ -9,6 +9,8 @@ inputs:
     required: true
   mention-person:
     description: "User to mention in message"
+  author:
+    description: "Override the GitHub actor (for dispatched workflows)"
   status:
     description: 'Status of the deployment [start, done, request, success, cancelled, failure]'
     default: 'start'
@@ -23,11 +25,12 @@ runs:
       run: |
         echo "job_status=${{ inputs.job-status || job.status }}" >> $GITHUB_ENV
     - name: Notify
-      uses: Basis-Theory/github-actions/helper-slack-action@master
+      uses: Basis-Theory/public-github-actions/helper-slack-action@master
       with:
         github: ${{ toJSON(github) }}
         slack-api-token: ${{ inputs.slack-api-token }}
         channel: ${{ inputs.channel }}
         mention-person: ${{ inputs.mention-person }}
+        author: ${{ inputs.author }}
         status: ${{ inputs.status }}
         extras: nope

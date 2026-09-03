@@ -154,8 +154,10 @@ const alertDeployDone = (config) => __awaiter(void 0, void 0, void 0, function* 
         job_status === "cancelled") {
         yield (0, approval_helpers_1.approvalWasGrantedOrRejected)(config, undefined, true);
     }
-    if (github_helpers_1.FAILURE_STATUSES.includes(config.status) || job_status === "failure") {
-        yield (0, slack_client_1.sendMessage)(config.channel, (0, useBlocks_1.default)().getFailedMention(config), "", message.ts);
+    const failedMention = (0, useBlocks_1.default)().getFailedMention(config);
+    if (failedMention &&
+        (github_helpers_1.FAILURE_STATUSES.includes(config.status) || job_status === "failure")) {
+        yield (0, slack_client_1.sendMessage)(config.channel, failedMention, "", message.ts);
     }
     return message.ts;
 });
@@ -486,13 +488,14 @@ const getDraftReleaseCollabs = (release_notes) => {
     return `${mentions}`;
 };
 const getFailedMention = ({ slack_user_id }) => {
-    const mention = slack_user_id ? `@${slack_user_id}` : "!subteam^S03SRBLDYBZ";
+    if (!slack_user_id)
+        return undefined;
     return [
         {
             type: "section",
             text: {
                 type: "mrkdwn",
-                text: `<${mention}>`,
+                text: `<@${slack_user_id}>`,
             },
         },
     ];
@@ -576,11 +579,20 @@ const getReleaseNotes = (githubContext) => {
     }
     return "no release notes";
 };
-const getAuthor = (githubContext) => githubContext.event.release &&
-    !githubContext.event.release.author.login.includes("github-actions") &&
-    !githubContext.event.release.author.login.includes("[bot]")
-    ? githubContext.event.release.author.login
-    : githubContext.actor;
+const isBot = (login) => login.includes("github-actions") || login.includes("[bot]");
+const getAuthor = (githubContext) => {
+    var _a, _b, _c;
+    const authorOverride = (0, core_1.getInput)("author");
+    if (authorOverride)
+        return authorOverride;
+    const candidates = [
+        (_a = githubContext.event.release) === null || _a === void 0 ? void 0 : _a.author.login,
+        githubContext.actor,
+        (_c = (_b = githubContext.event.head_commit) === null || _b === void 0 ? void 0 : _b.author) === null || _c === void 0 ? void 0 : _c.username,
+    ];
+    const human = candidates.find((login) => login && !isBot(login));
+    return human !== null && human !== void 0 ? human : githubContext.actor;
+};
 const getDateTime = () => {
     return Intl.DateTimeFormat("en", {
         timeZone: "America/Chicago",

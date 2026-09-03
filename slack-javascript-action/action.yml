@@ -18,6 +18,8 @@ inputs:
     required: true
   mention-person:
     description: "User to mention in message"
+  author:
+    description: "Override the GitHub actor (for dispatched workflows)"
 outputs:
   message_id:
     description: 'id of the message'

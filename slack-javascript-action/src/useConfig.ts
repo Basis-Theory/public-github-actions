@@ -39,6 +39,11 @@ export type GithubContextType = {
         login: string;
       };
     };
+    head_commit?: {
+      author?: {
+        username?: string;
+      };
+    };
   };
 };
 
@@ -61,12 +66,22 @@ const getReleaseNotes = (githubContext: GithubContextType): string => {
   return "no release notes";
 };
 
-const getAuthor = (githubContext: GithubContextType): string =>
-  githubContext.event.release &&
-  !githubContext.event.release.author.login.includes("github-actions") &&
-  !githubContext.event.release.author.login.includes("[bot]")
-    ? githubContext.event.release.author.login
-    : githubContext.actor;
+const isBot = (login: string): boolean =>
+  login.includes("github-actions") || login.includes("[bot]");
+
+const getAuthor = (githubContext: GithubContextType): string => {
+  const authorOverride = getInput("author");
+  if (authorOverride) return authorOverride;
+
+  const candidates = [
+    githubContext.event.release?.author.login,
+    githubContext.actor,
+    githubContext.event.head_commit?.author?.username,
+  ];
+  const human = candidates.find((login) => login && !isBot(login));
+
+  return human ?? githubContext.actor;
+};
 
 const getDateTime = (): string => {
   return Intl.DateTimeFormat("en", {

@@ -4,7 +4,7 @@ import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { jest } from "@jest/globals";
 import { deploy_notifier } from "../src/deploy_notifier";
-import useSimulatedGithub, { coreData } from "./useSimulatedGithub";
+import useSimulatedGithub, { coreData, githubData } from "./useSimulatedGithub";
 import useSlackMock from "./useSlackMock";
 jest.mock("@actions/core");
 jest.mock("@actions/artifact");
@@ -13,9 +13,8 @@ const mockedArtifact = artifact as jest.Mocked<typeof artifact>;
 
 const { mockGetInput, setJobStatus, mockArtifact, cleanUp } =
   useSimulatedGithub(mockedCore, mockedArtifact);
-const { mockCreateMessage, mockUpdateMessage } = useSlackMock(
-  new MockAdapter(axios)
-);
+const slackMock = new MockAdapter(axios);
+const { mockCreateMessage, mockUpdateMessage } = useSlackMock(slackMock);
 
 beforeEach(() => {
   jest.useFakeTimers();
@@ -145,5 +144,30 @@ describe("failed build", () => {
 
   test("works with status", async () => {
     expect(await deployFailedWithStatus()).toMatchSnapshot();
+  });
+});
+
+describe("failed build with no slack user for the author", () => {
+  test("does not thread a mention", async () => {
+    const botGithub = {
+      ...githubData,
+      actor: "ducktape-cd[bot]",
+      event: { ...githubData.event, release: undefined },
+    };
+    mockGetInput({ status: "done", github: JSON.stringify(botGithub) });
+    setJobStatus("failure");
+    const posts: any[] = [];
+    slackMock
+      .onPost("https://slack.com/api/chat.postMessage")
+      .reply((config) => {
+        posts.push(JSON.parse(config.data));
+        return [200, { ts: "created message id" }];
+      });
+
+    await deploy_notifier();
+
+    expect(posts).toHaveLength(1);
+    expect(JSON.stringify(posts[0])).not.toContain("subteam");
+    expect(posts[0].blocks[1].elements[0].text).toContain("ducktape-cd[bot]");
   });
 });

@@ -19,7 +19,7 @@ afterEach(() => {
 });
 
 const mockedEnvs: string[] = [];
-let githubData: GithubContextType = {
+export const githubData: GithubContextType = {
   repository: "testing",
   run_id: "12",
   server_url: "http://test-repo.com",

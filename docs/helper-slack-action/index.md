@@ -8,7 +8,7 @@ The action routes to different behaviors based on the `type` and `status` inputs
 
 - **`type: deploy` + `status: start`** — Posts a "Deploy Started" message with repo, version, author, and timestamps. Threads release notes beneath it. If an approval artifact exists, updates it.
 - **`type: deploy` + `status: request`** — Posts an "Approval Requested" message mentioning the specified person, threads release notes, and uploads an artifact so the approval message can be updated later.
-- **`type: deploy` + `status: done/success/failure/cancelled`** — Updates the original "Deploy Started" message (via `SLACK_MESSAGE_ID` env var) to reflect final status. On failure, threads a mention (either the deploy author's Slack ID or a user group fallback). On cancellation, marks the approval request as cancelled.
+- **`type: deploy` + `status: done/success/failure/cancelled`** — Updates the original "Deploy Started" message (via `SLACK_MESSAGE_ID` env var) to reflect final status. On failure, threads a mention of the deploy author's Slack ID when one is mapped; unmapped authors (including bot actors) get no mention. On cancellation, marks the approval request as cancelled.
 - **`type: draft-release-ready`** — Posts a draft release notification with collaborator mentions (GitHub-to-Slack user mapping).
 
 ## Inputs
@@ -19,6 +19,7 @@ The action routes to different behaviors based on the `type` and `status` inputs
 | `github` | Yes | | `${{ toJSON(github) }}` — the full GitHub context |
 | `channel` | Yes | | Slack channel ID to send the message to |
 | `mention-person` | No | | Slack user to mention for approvals |
+| `author` | No | | GitHub login to attribute the deploy to instead of the actor (for dispatched workflows or bot-initiated pushes) |
 | `status` | No | `start` | `start`, `done`, `request`, `success`, `failure`, `cancelled` |
 | `type` | No | `deploy` | `deploy` or `draft-release-ready` |
 

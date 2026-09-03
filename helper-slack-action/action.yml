@@ -12,6 +12,8 @@ inputs:
     required: true
   mention-person:
     description: "User to mention in message"
+  author:
+    description: "Override the GitHub actor (for dispatched workflows)"
   status:
     description: "Status of run [start, done, request]"
     default: "start"

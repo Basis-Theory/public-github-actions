@@ -51,13 +51,12 @@ const alertDeployDone = async (config: ConfigType) => {
     await approvalWasGrantedOrRejected(config, undefined, true);
   }
 
-  if (FAILURE_STATUSES.includes(config.status) || job_status === "failure") {
-    await sendMessage(
-      config.channel,
-      useBlocks().getFailedMention(config),
-      "",
-      message.ts
-    );
+  const failedMention = useBlocks().getFailedMention(config);
+  if (
+    failedMention &&
+    (FAILURE_STATUSES.includes(config.status) || job_status === "failure")
+  ) {
+    await sendMessage(config.channel, failedMention, "", message.ts);
   }
 
   return message.ts;

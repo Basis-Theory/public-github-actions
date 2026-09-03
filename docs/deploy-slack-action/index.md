@@ -14,6 +14,7 @@ A composite action that sends deployment lifecycle notifications to Slack. It wr
 | `slack-api-token` | Yes | | Slack Bot API token |
 | `channel` | Yes | | Slack channel ID to send the message to |
 | `mention-person` | No | | Slack user to mention in the notification |
+| `author` | No | | GitHub login to attribute the deploy to instead of the actor (for dispatched workflows or bot-initiated pushes) |
 | `status` | No | `start` | Deploy status: `start`, `done`, `request`, `success`, `cancelled`, `failure` |
 | `job-status` | No | | Overrides `job.status` for the final notification |
 

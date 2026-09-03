@@ -125,3 +125,59 @@ describe("no release or commit", () => {
     expect(useConfig()).toMatchSnapshot();
   });
 });
+
+describe("push merged by a bot account", () => {
+  beforeEach(() => {
+    const localMockData = {
+      ...githubData,
+      actor: "ducktape-cd[bot]",
+      event: {
+        ...githubData.event,
+        release: undefined,
+        head_commit: { author: { username: "dhudec" } },
+      },
+    };
+
+    mockGetInput({ ...coreData, github: JSON.stringify(localMockData) });
+  });
+
+  test("uses the pushed commit author, not the bot actor", () => {
+    const config = useConfig();
+    expect(config.author).toBe("dhudec");
+    expect(config.slack_user_id).toBe("U029GBW14P3");
+  });
+});
+
+describe("push by a bot account with no human author", () => {
+  beforeEach(() => {
+    const localMockData = {
+      ...githubData,
+      actor: "ducktape-cd[bot]",
+      event: {
+        ...githubData.event,
+        release: undefined,
+        head_commit: { author: { username: "ducktape-cd[bot]" } },
+      },
+    };
+
+    mockGetInput({ ...coreData, github: JSON.stringify(localMockData) });
+  });
+
+  test("keeps the bot actor and resolves no slack user", () => {
+    const config = useConfig();
+    expect(config.author).toBe("ducktape-cd[bot]");
+    expect(config.slack_user_id).toBeUndefined();
+  });
+});
+
+describe("author input override", () => {
+  beforeEach(() => {
+    mockGetInput({ ...coreData, author: "lcschy" });
+  });
+
+  test("wins over the release author and actor", () => {
+    const config = useConfig();
+    expect(config.author).toBe("lcschy");
+    expect(config.slack_user_id).toBe("U026LV447FG");
+  });
+});

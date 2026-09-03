@@ -171,13 +171,13 @@ const getDraftReleaseCollabs = (release_notes: string): any => {
 };
 
 const getFailedMention = ({ slack_user_id }: ConfigType): any => {
-  const mention = slack_user_id ? `@${slack_user_id}` : "!subteam^S03SRBLDYBZ";
+  if (!slack_user_id) return undefined;
   return [
     {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `<${mention}>`,
+        text: `<@${slack_user_id}>`,
       },
     },
   ];

@@ -208,6 +208,30 @@ exports[`get deploy message Updated message when deploy is done 1`] = `
 ]
 `;
 
+exports[`get failed mention mentions a mapped author 1`] = `
+[
+  {
+    "text": {
+      "text": "<@DREWSUE_TESTING>",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
+exports[`get failed mention uses the fallback for an unmapped author 1`] = `
+[
+  {
+    "text": {
+      "text": "<!subteam^S04MGAAG0MU>",
+      "type": "mrkdwn",
+    },
+    "type": "section",
+  },
+]
+`;
+
 exports[`release notes Correctly formed will return each as its own block and no urls 1`] = `
 [
   {

@@ -170,14 +170,18 @@ const getDraftReleaseCollabs = (release_notes: string): any => {
   return `${mentions}`;
 };
 
-const getFailedMention = ({ slack_user_id }: ConfigType): any => {
-  if (!slack_user_id) return undefined;
+const getFailedMention = ({
+  slack_user_id,
+  fallback_mention,
+}: ConfigType): any => {
+  const mention = slack_user_id ? `<@${slack_user_id}>` : fallback_mention;
+  if (!mention) return undefined;
   return [
     {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `<@${slack_user_id}>`,
+        text: mention,
       },
     },
   ];

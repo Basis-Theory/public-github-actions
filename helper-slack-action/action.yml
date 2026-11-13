@@ -12,6 +12,8 @@ inputs:
     required: true
   mention-person:
     description: "User to mention in message"
+  fallback-mention:
+    description: "Fallback Slack mention for failed deploys with an unmapped author"
   author:
     description: "Override the GitHub actor (for dispatched workflows)"
   status:

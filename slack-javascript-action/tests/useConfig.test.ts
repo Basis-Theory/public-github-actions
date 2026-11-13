@@ -167,6 +167,33 @@ describe("push by a bot account with no human author", () => {
     const config = useConfig();
     expect(config.author).toBe("ducktape-cd[bot]");
     expect(config.slack_user_id).toBeUndefined();
+    expect(config.fallback_mention).toBeUndefined();
+  });
+});
+
+describe("fallback mention input", () => {
+  beforeEach(() => {
+    const localMockData = {
+      ...githubData,
+      actor: "ducktape-cd[bot]",
+      event: {
+        ...githubData.event,
+        release: undefined,
+        head_commit: { author: { username: "ducktape-cd[bot]" } },
+      },
+    };
+
+    mockGetInput({
+      ...coreData,
+      github: JSON.stringify(localMockData),
+      "fallback-mention": "<!subteam^S04MGAAG0MU>",
+    });
+  });
+
+  test("carries the fallback for an unmapped author", () => {
+    const config = useConfig();
+    expect(config.slack_user_id).toBeUndefined();
+    expect(config.fallback_mention).toBe("<!subteam^S04MGAAG0MU>");
   });
 });
 

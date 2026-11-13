@@ -9,6 +9,8 @@ inputs:
     required: true
   mention-person:
     description: "User to mention in message"
+  fallback-mention:
+    description: "Fallback Slack mention for failed deploys with an unmapped author"
   author:
     description: "Override the GitHub actor (for dispatched workflows)"
   status:
@@ -31,6 +33,7 @@ runs:
         slack-api-token: ${{ inputs.slack-api-token }}
         channel: ${{ inputs.channel }}
         mention-person: ${{ inputs.mention-person }}
+        fallback-mention: ${{ inputs.fallback-mention }}
         author: ${{ inputs.author }}
         status: ${{ inputs.status }}
         extras: nope

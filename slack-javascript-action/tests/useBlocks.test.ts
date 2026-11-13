@@ -55,6 +55,7 @@ describe("get approval message", () => {
       action_url: "http://test-repo.com/action",
       channel: "C1234567890",
       mention_person: "drewsue",
+      fallback_mention: undefined,
       type: "deploy",
     };
 
@@ -78,6 +79,7 @@ describe("get approval message", () => {
       action_url: "http://test-repo.com/action",
       channel: "C1234567890",
       mention_person: "drewsue",
+      fallback_mention: undefined,
       type: "deploy",
     };
 
@@ -106,6 +108,7 @@ describe("get approval message", () => {
       action_url: "http://test-repo.com/action",
       channel: "C1234567890",
       mention_person: "drewsue",
+      fallback_mention: undefined,
       type: "deploy",
     };
 
@@ -135,6 +138,7 @@ describe("get deploy message", () => {
       startedTimestamp: "2021-01-01T00:00:00Z",
       channel: "chan-123",
       mention_person: "drewsue",
+      fallback_mention: undefined,
       type: "deploy",
     };
 
@@ -158,11 +162,52 @@ describe("get deploy message", () => {
       stoppedTimestamp: "2021-01-01T00:00:00Z",
       channel: "chan-123",
       mention_person: "drewsue",
+      fallback_mention: undefined,
       type: "deploy",
     };
 
     const approvalMessage = useBlocks().getDeployMessage("Deploying", config);
 
     expect(approvalMessage).toMatchSnapshot();
+  });
+});
+
+describe("get failed mention", () => {
+  const config: ConfigType = {
+    job_status: "failure",
+    message_id: undefined,
+    release_notes: "",
+    repository: "test-repo",
+    version: "v42.0.0",
+    author: "drewsue",
+    slack_user_id: "DREWSUE_TESTING",
+    action_url: "http://test-repo.com/action",
+    status: "done",
+    startedTimestamp: "2021-01-01T00:00:00Z",
+    stoppedTimestamp: "2021-01-01T00:00:00Z",
+    channel: "chan-123",
+    mention_person: undefined,
+    fallback_mention: undefined,
+    type: "deploy",
+  };
+
+  test("mentions a mapped author", () => {
+    expect(useBlocks().getFailedMention(config)).toMatchSnapshot();
+  });
+
+  test("uses the fallback for an unmapped author", () => {
+    expect(
+      useBlocks().getFailedMention({
+        ...config,
+        slack_user_id: undefined,
+        fallback_mention: "<!subteam^S04MGAAG0MU>",
+      })
+    ).toMatchSnapshot();
+  });
+
+  test("returns undefined for an unmapped author without a fallback", () => {
+    expect(
+      useBlocks().getFailedMention({ ...config, slack_user_id: undefined })
+    ).toBeUndefined();
   });
 });

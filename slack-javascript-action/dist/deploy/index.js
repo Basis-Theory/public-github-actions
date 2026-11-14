@@ -487,15 +487,16 @@ const getDraftReleaseCollabs = (release_notes) => {
     const mentions = matches === null || matches === void 0 ? void 0 : matches.map((u) => githubToSlack[u.trim()]).map((mention) => `<@${mention}>`).join(" ");
     return `${mentions}`;
 };
-const getFailedMention = ({ slack_user_id }) => {
-    if (!slack_user_id)
+const getFailedMention = ({ slack_user_id, fallback_mention, }) => {
+    const mention = slack_user_id ? `<@${slack_user_id}>` : fallback_mention;
+    if (!mention)
         return undefined;
     return [
         {
             type: "section",
             text: {
                 type: "mrkdwn",
-                text: `<@${slack_user_id}>`,
+                text: mention,
             },
         },
     ];
@@ -638,6 +639,7 @@ const useConfig = () => {
     const type = (0, core_1.getInput)("type");
     const channel = (0, core_1.getInput)("channel");
     const mention_person = (0, core_1.getInput)("mention-person");
+    const fallback_mention = (0, core_1.getInput)("fallback-mention");
     const job_status = process.env.job_status;
     const startedTimestamp = getStartedTimestamp();
     const stoppedTimestamp = getStoppedTimestamp();
@@ -656,6 +658,7 @@ const useConfig = () => {
         job_status,
         channel,
         mention_person,
+        fallback_mention,
     };
 };
 exports["default"] = useConfig;

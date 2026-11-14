@@ -148,6 +148,41 @@ describe("failed build", () => {
 });
 
 describe("failed build with no slack user for the author", () => {
+  test("threads the fallback mention", async () => {
+    const botGithub = {
+      ...githubData,
+      actor: "ducktape-cd[bot]",
+      event: { ...githubData.event, release: undefined },
+    };
+    mockGetInput({
+      status: "done",
+      github: JSON.stringify(botGithub),
+      "fallback-mention": "<!subteam^S04MGAAG0MU>",
+    });
+    setJobStatus("failure");
+    const posts: any[] = [];
+    slackMock
+      .onPost("https://slack.com/api/chat.postMessage")
+      .reply((config) => {
+        posts.push(JSON.parse(config.data));
+        return [200, { ts: "created message id" }];
+      });
+
+    await deploy_notifier();
+
+    expect(posts).toHaveLength(2);
+    expect(posts[1].blocks).toEqual([
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "<!subteam^S04MGAAG0MU>",
+        },
+      },
+    ]);
+    expect(posts[1].thread_ts).toBe("created message id");
+  });
+
   test("does not thread a mention", async () => {
     const botGithub = {
       ...githubData,

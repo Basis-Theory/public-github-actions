@@ -5,7 +5,7 @@ export type ConfigType = {
   version: string;
   release_notes: string;
   author: string;
-  slack_user_id: string;
+  slack_user_id: string | undefined;
   type: string;
   action_url: string;
   message_id: string | undefined;
@@ -15,6 +15,7 @@ export type ConfigType = {
   job_status: string | undefined;
   channel: string;
   mention_person: string | undefined;
+  fallback_mention: string | undefined;
 };
 
 export type GithubContextCommitType = {
@@ -133,6 +134,7 @@ const useConfig = (): ConfigType => {
   const type = getInput("type");
   const channel = getInput("channel");
   const mention_person = getInput("mention-person");
+  const fallback_mention = getInput("fallback-mention");
   const job_status = process.env.job_status;
   const startedTimestamp = getStartedTimestamp();
   const stoppedTimestamp = getStoppedTimestamp();
@@ -152,6 +154,7 @@ const useConfig = (): ConfigType => {
     job_status,
     channel,
     mention_person,
+    fallback_mention,
   };
 };
 
